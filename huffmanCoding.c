@@ -6,6 +6,7 @@ struct node {
     struct node * parent;
     struct node * left;
     struct node * right;
+    int sym;
 };
 
 void sort(double * arr, int n) {
@@ -22,19 +23,22 @@ void sort(double * arr, int n) {
    }
 }
 
-struct node * huffTree(double * arr, int n) {
+struct node ** huffTree(double * arr, int n) {
     int i;
     struct node * init = (struct node *)malloc(sizeof(struct node));
     struct node * initL = (struct node *)malloc(sizeof(struct node));
     struct node * initR = (struct node *)malloc(sizeof(struct node));
+    struct node * * nodes = (struct node * *)malloc(sizeof(struct node) * (n+1));
 
     initL->code = 0;
     initL->left = initL->right = NULL;    
     initL->val = arr[1];
+    initL->sym = 1;
 
     initR->code = 1;
     initR->left = initR->right = NULL;    
     initR->val = arr[0];
+    initR->sym = 1;
 
     initL->parent = initR->parent = init;
     init->parent = NULL;
@@ -42,13 +46,16 @@ struct node * huffTree(double * arr, int n) {
     init->left = initL; 
     init->right = initR;
 
+    nodes[0] = initR;
+    nodes[1] = initL;
+
     for (i = 2; i < n; i++) {
         struct node * tmp = (struct node *)malloc(sizeof(struct node));
         struct node * tmp2 = (struct node *)malloc(sizeof(struct node));
 
         tmp2->left = tmp2->right = NULL;
         tmp2->val = arr[i];
-        
+        tmp2->sym = 1;
         if (init->val <= arr[i]) {
             tmp->right = init; 
             tmp->left = tmp2;
@@ -62,18 +69,32 @@ struct node * huffTree(double * arr, int n) {
         }
         tmp->val = init->val + tmp2->val;
         init->parent = tmp2->parent = tmp;
+        tmp->parent = NULL;
+        nodes[i] = tmp2;
         init = tmp;
     }
 
-    return init;
+    nodes[n] = init;
+
+    return nodes;
 }
+
 
 int main() {
     double arr[] = {0.4, 0.2, 0.2, 0.1, 0.07, 0.03};
     sort(arr, 6);
 
-    struct node * tree = huffTree(arr, 6);
-    printf("%f\n", tree->val);    
+    struct node ** nodes = huffTree(arr, 6);
+    struct node * x = nodes[1];
+
+    while(1) {
+        if (x->parent != NULL) {
+            printf("%d", x->code);
+            x = x->parent;
+        } else {
+            break;
+        }
+     }
 
     return 0;
 }
