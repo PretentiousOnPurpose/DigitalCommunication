@@ -74,27 +74,41 @@ struct node ** huffTree(double * arr, int n) {
         init = tmp;
     }
 
-    nodes[n] = init;
-
     return nodes;
 }
 
+void getCode(struct node * n) {
+    int code[50];
+    int i = 0;
+    while(1) {
+        if (n->parent != NULL) {
+            code[i++] = n->code;
+            n = n->parent;
+        } else {
+            break;
+        }
+    }
+
+    while (i > 0) {
+        printf("%d", code[--i]);
+    }
+    printf("\n");
+
+}
 
 int main() {
+    int i;
     double arr[] = {0.4, 0.2, 0.2, 0.1, 0.07, 0.03};
     sort(arr, 6);
 
     struct node ** nodes = huffTree(arr, 6);
-    struct node * x = nodes[1];
+    struct node * x = nodes[4];
 
-    while(1) {
-        if (x->parent != NULL) {
-            printf("%d", x->code);
-            x = x->parent;
-        } else {
-            break;
-        }
-     }
+    for (i = 5; i >= 0; i--) {
+        printf("%f: ", arr[i]);
+        getCode(nodes[i]);
+    }
+    
 
     return 0;
 }
