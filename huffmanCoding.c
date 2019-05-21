@@ -30,15 +30,17 @@ struct node * huffTree(double * arr, int n) {
 
     initL->code = 0;
     initL->left = initL->right = NULL;    
-    initL->val = arr[0];
+    initL->val = arr[1];
 
     initR->code = 1;
     initR->left = initR->right = NULL;    
-    initR->val = arr[1];
+    initR->val = arr[0];
 
     initL->parent = initR->parent = init;
     init->parent = NULL;
     init->val = (arr[0] + arr[1]);
+    init->left = initL; 
+    init->right = initR;
 
     for (i = 2; i < n; i++) {
         struct node * tmp = (struct node *)malloc(sizeof(struct node));
@@ -49,13 +51,16 @@ struct node * huffTree(double * arr, int n) {
         
         if (init->val <= arr[i]) {
             tmp->right = init; 
+            tmp->left = tmp2;
             init->code = 1;
             tmp2->code = 0;
         } else {
             tmp->left = init;
+            tmp->right = tmp2; 
             init->code = 0;
             tmp2->code = 1;
         }
+        tmp->val = init->val + tmp2->val;
         init->parent = tmp2->parent = tmp;
         init = tmp;
     }
@@ -68,7 +73,7 @@ int main() {
     sort(arr, 6);
 
     struct node * tree = huffTree(arr, 6);
-    
+    printf("%f\n", tree->val);    
 
     return 0;
 }
