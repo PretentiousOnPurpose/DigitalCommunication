@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 struct node {
-    double val;
+    float val;
     int code;
     struct node * parent;
     struct node * left;
@@ -9,9 +9,9 @@ struct node {
     int sym;
 };
 
-void sort(double * arr, int n) {
+void sort(float * arr, int n) {
    int i, j;
-   double tmp; 
+   float tmp; 
    for (i = 0; i < n-1; i++) {     
        for (j = 0; j < n-i-1; j++) {  
            if (arr[j] > arr[j+1]) {
@@ -23,7 +23,7 @@ void sort(double * arr, int n) {
    }
 }
 
-struct node ** huffTree(double * arr, int n) {
+struct node ** huffTree(float * arr, int n) {
     int i;
     struct node * init = (struct node *)malloc(sizeof(struct node));
     struct node * initL = (struct node *)malloc(sizeof(struct node));
@@ -67,11 +67,14 @@ struct node ** huffTree(double * arr, int n) {
             init->code = 0;
             tmp2->code = 1;
         }
+
         tmp->val = init->val + tmp2->val;
         init->parent = tmp2->parent = tmp;
         tmp->parent = NULL;
         nodes[i] = tmp2;
         init = tmp;
+
+
     }
 
     return nodes;
@@ -82,8 +85,10 @@ void getCode(struct node * n) {
     int i = 0;
     while(1) {
         if (n->parent != NULL) {
+
             code[i++] = n->code;
             n = n->parent;
+            
         } else {
             break;
         }
@@ -97,18 +102,16 @@ void getCode(struct node * n) {
 }
 
 int main() {
-    int i;
-    double arr[] = {0.4, 0.2, 0.2, 0.1, 0.07, 0.03};
-    sort(arr, 6);
+    int i, N = 4;
+    float arr[] = {0.4, 0.3, 0.2, 0.1};
+    sort(arr, N);
 
-    struct node ** nodes = huffTree(arr, 6);
-    struct node * x = nodes[4];
+    struct node ** nodes = huffTree(arr, N);
 
-    for (i = 5; i >= 0; i--) {
+    for (i = N-1; i >= 0; i--) {
         printf("%f: ", arr[i]);
         getCode(nodes[i]);
     }
-    
 
     return 0;
 }
